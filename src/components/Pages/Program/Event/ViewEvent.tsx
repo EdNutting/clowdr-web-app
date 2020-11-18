@@ -34,6 +34,7 @@ enum EventViewElements {
     YouTube,
     ZoomForChairAndAuthors,
     ZoomForQAndA,
+    ZoomForSession,
     VideoRoom,
     VideoRoomWithClosedownWarning
 }
@@ -395,7 +396,7 @@ export default function ViewEvent(props: Props) {
             case EventViewMode.Loading:
                 return [EventViewElements.LoadingSpinner];
             case EventViewMode.Everything:
-                return [EventViewElements.YouTube, EventViewElements.ZoomForQAndA, EventViewElements.VideoRoom];
+                return [EventViewElements.YouTube, EventViewElements.ZoomForSession, EventViewElements.VideoRoom];
             case EventViewMode.PreEvent:
                 return [EventViewElements.VideoRoom];
             case EventViewMode.PreShow:
@@ -447,6 +448,7 @@ export default function ViewEvent(props: Props) {
                                             elementsToShow.includes(EventViewElements.YouTube)
                                             || elementsToShow.includes(EventViewElements.ZoomForChairAndAuthors)
                                             || elementsToShow.includes(EventViewElements.ZoomForQAndA)
+                                            || elementsToShow.includes(EventViewElements.ZoomForSession)
                                         )
                                         ? (
                                             <div className="session-feed">
@@ -463,6 +465,7 @@ export default function ViewEvent(props: Props) {
                                                         !(
                                                             elementsToShow.includes(EventViewElements.ZoomForQAndA)
                                                             || elementsToShow.includes(EventViewElements.ZoomForChairAndAuthors)
+                                                            || elementsToShow.includes(EventViewElements.ZoomForSession)
                                                         )
                                                     }
                                                     zoomButtonText={
@@ -471,12 +474,17 @@ export default function ViewEvent(props: Props) {
                                                                 app: "Session Chairs and Authors: Join the Zoom room via Zoom's app (recommended)",
                                                                 browser: "Session Chairs and Authors: Join the Zoom room in-browser"
                                                             }
-                                                            : {
-                                                                app: "Join the Q&A in Zoom via Zoom's app (recommended)",
-                                                                browser: "Join the Q&A in Zoom in-browser"
-                                                            }
+                                                            : elementsToShow.includes(EventViewElements.ZoomForQAndA)
+                                                                ? {
+                                                                    app: "Join the Q&A in Zoom via Zoom's app (recommended)",
+                                                                    browser: "Join the Q&A in Zoom in-browser"
+                                                                }
+                                                                : {
+                                                                    app: "Join this event in Zoom via Zoom's app (recommended)",
+                                                                    browser: "Join this event in Zoom in-browser"
+                                                                }
                                                     }
-                                                    zoomAboveYouTube={elementsToShow.includes(EventViewElements.ZoomForQAndA)}
+                                                    zoomAboveYouTube={elementsToShow.includes(EventViewElements.ZoomForQAndA) || elementsToShow.includes(EventViewElements.ZoomForSession)}
                                                 />
                                                 }
                                             </div>
