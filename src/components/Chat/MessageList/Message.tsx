@@ -140,10 +140,11 @@ export async function renderMessage(
         timeStr:
             (isDifferentDate ? time.toLocaleDateString(undefined, dateFormat) + " " : "") +
             time
-                .toLocaleTimeString()
-                .split(":")
-                .slice(0, 2)
-                .join(":"),
+                .toLocaleTimeString(undefined, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                }),
         index: message.index,
         reactions,
         moderation,
