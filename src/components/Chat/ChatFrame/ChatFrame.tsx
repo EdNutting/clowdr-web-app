@@ -7,7 +7,6 @@ import MessageList from "../MessageList/MessageList";
 import "./ChatFrame.scss";
 import { Picker as EmojiPicker } from "emoji-mart";
 import { ChatDescriptor } from "../../../classes/Chat";
-import ReactDOM from "react-dom";
 import OutsideClickHandler from "react-outside-click-handler";
 import { usePopper } from "react-popper";
 

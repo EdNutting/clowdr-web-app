@@ -362,9 +362,10 @@ export default function ChatsGroup(props: Props) {
     useSafeAsync(
         async () => {
             if (mUser && mChat) {
-                const chats = await mChat.listWatchedChatsUnfiltered();
+                const chats = await mChat.listWatchedChats();
+                const activeChatIds = chats.map(y => y.id);
                 const chatsWithName: Array<SidebarChatDescriptor> = await Promise.all(
-                    chats.map(x => upgradeChatDescriptor(conf, x, mUser.id))
+                    chats.map(x => upgradeChatDescriptor(conf, x, mUser.id, activeChatIds))
                 );
                 return chatsWithName;
             }
@@ -461,8 +462,9 @@ export default function ChatsGroup(props: Props) {
                     );
                     cancel = promise.cancel;
                     const filteredChats = await promise.promise;
+                    const activeChatIds = state.watchedChatIds ?? [];
                     const filteredChatsWithNames: Array<FilteredSidebarChatDescriptor> = await Promise.all(
-                        filteredChats.map(async x => (x.exists ? await upgradeChatDescriptor(conf, x, _mUser.id) : x))
+                        filteredChats.map(async x => (x.exists ? await upgradeChatDescriptor(conf, x, _mUser.id, activeChatIds) : x))
                     );
 
                     dispatchUpdate({
@@ -480,7 +482,7 @@ export default function ChatsGroup(props: Props) {
         }
 
         return cancel;
-    }, [conf, conf.id, props.minSearchLength, state.allChats, state.chatSearch, state.allUsers, mUser]);
+    }, [conf, conf.id, props.minSearchLength, state.allChats, state.chatSearch, state.allUsers, mUser, state.watchedChatIds]);
 
     // Subscribe to chat events
     useEffect(() => {
@@ -602,7 +604,7 @@ export default function ChatsGroup(props: Props) {
                     const chat = await mChat.getChat(object.id);
                     if (chat) {
                         if (state.watchedChatIds?.includes(chat.id)) {
-                            const chatD = await upgradeChatDescriptor(conf, chat, mUser.id);
+                            const chatD = await upgradeChatDescriptor(conf, chat, mUser.id, [chat.id]);
                             if (!newActiveChats) {
                                 newActiveChats = [];
                             }
