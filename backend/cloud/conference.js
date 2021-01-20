@@ -706,14 +706,14 @@ Parse.Cloud.job("conference-create", async (request) => {
             }
             await clearOutDeadSubaccounts();
             twilioSubaccount = await getTwilioSubaccount();
-            if (!twilioSubaccount) {
-                await createTwilioSubaccount();
-                message(`Created subaccount: ${twilioSubaccount.sid}`);
-            }
-            else {
-                await reactivateTwilioSubaccount();
-                message(`Got and reactivated existing subaccount: ${twilioSubaccount.sid}`);
-            }
+            // if (!twilioSubaccount) {
+            await createTwilioSubaccount();
+            //     message(`Created subaccount: ${twilioSubaccount.sid}`);
+            // }
+            // else {
+            //     await reactivateTwilioSubaccount();
+            //     message(`Got and reactivated existing subaccount: ${twilioSubaccount.sid}`);
+            // }
 
             // Configure Twilio subaccount
             message(`Configuring Twilio subaccount (${twilioSubaccount.sid})...`);

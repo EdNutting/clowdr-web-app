@@ -23,6 +23,7 @@ import {
 import useDataSubscription from "../../../hooks/useDataSubscription";
 import useUserRoles from "../../../hooks/useUserRoles";
 import { useHistory } from "react-router-dom";
+import Parse from "parse";
 
 interface Props {
     roomId: string;
@@ -31,7 +32,7 @@ interface Props {
 type UserOption = {
     label: string;
     value: string;
-};
+}
 
 export default function ViewVideoRoom(props: Props) {
     const conference = useConference();
@@ -307,6 +308,20 @@ export default function ViewVideoRoom(props: Props) {
                 ariaLabel: "Go to sponsor",
                 icon: <i className="fas fa-person-booth" />,
                 label: "Go to sponsor",
+            });
+        }
+        let connectClicked = false;
+        if(room.mode==="roulette"){
+            actionButtons.push({
+                label:"Exchange information",
+                icon:<i className={"amber-text pr-3"}></i>,
+                action: async () => {
+                    if(!connectClicked){
+                        await Parse.Cloud.run("updateRouletteConnectionHistory", {roomId: room.id, currUser: currentUserProfile.id});
+                    }
+                    connectClicked=true;
+                },
+                ariaLabel: "Exchange information",
             });
         }
     }

@@ -65,6 +65,18 @@ export default class Video {
         });
     }
 
+    public async createRouletteRoom(capacity: number, ephemeral: boolean, isPrivate: boolean, name: string,  mode: string, textChat?: TextChat): Promise<string> {
+        return Parse.Cloud.run("rouletteRoom-create", {
+            capacity,
+            ephemeral,
+            isPrivate,
+            name,
+            mode,
+            textChat: textChat?.id,
+            conference: this.conference.id
+        });
+    }
+
     public async inviteToRoom(room: VideoRoom, users: Array<string>): Promise<{ [k: string]: boolean }> {
         return Parse.Cloud.run("videoRoom-invite", {
             conference: this.conference.id,

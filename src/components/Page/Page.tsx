@@ -54,6 +54,8 @@ import AllSponsors from "../Pages/AllSponsors/AllSponsors";
 import ProgramEditor from "../Pages/Admin/Program/ProgramEditor";
 import ProfileItems from "../Pages/ProfileItems/ProfileItems";
 import AdminAnalytics from "../Pages/Admin/Analytics/Analytics";
+import Connections from "../Pages/ChatRoulette/Connections";
+import NewChatRoom from '../Pages/ChatRoulette/NewChatRoom';
 
 interface Props {
     doLogin: doLoginF;
@@ -238,6 +240,8 @@ function Page(props: Props) {
                         )}
                     />
 
+                    <Route path="/connections" component={() => <Connections userProfileId={mUser.id}/>} />
+
                     <Route
                         path="/profile/:userProfileId"
                         component={(p: RouteComponentProps<any>) => (
@@ -254,6 +258,13 @@ function Page(props: Props) {
                     <Route path="/admin/authors" component={isAdmin ? AdminAuthors : NotFound} />
                     <Route path="/admin/program" component={isAdmin ? ProgramEditor : NotFound} />
                     <Route path="/admin" component={isAdmin ? AdminTools : NotFound} />
+
+                    <Route path="/roulette/:roomId" component={(p: RouteComponentProps<any>) =>
+                        <VideoRoom roomId={p.match.params.roomId} />
+                    } />
+                    <Route path="/roulette" component={() => (
+                            <NewChatRoom userProfileId={mUser.id} />
+                    )} />
 
                     {footerRoutes}
 

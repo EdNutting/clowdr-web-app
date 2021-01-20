@@ -8,6 +8,7 @@ const { getConfig } = require("./config");
 const { createTextChat } = require("./textChat");
 const Twilio = require("twilio");
 const { logRequestError } = require("./errors");
+const {updateRouletteConnectionHistory} = require("./chatRoulette");
 
 // Video rooms are created in Twilio only when they are first needed.
 // So they are created when a user requests an access token for a room -
@@ -114,6 +115,16 @@ const createVideoRoomSchema = {
     textChat: "string?",
 };
 
+const createRouletteRoomSchema = {
+    capacity: "number",
+    ephemeral: "boolean",
+    isPrivate: "boolean",
+    name: "string",
+    twilioID: "string?",
+    conference: "string",
+    textChat: "string?",
+    mode: "string",
+};
 /**
  * Creates a Video Room.
  *
@@ -203,7 +214,56 @@ async function handleCreateVideoRoom(req) {
         throw new Error(requestValidation.error);
     }
 }
+
 Parse.Cloud.define("videoRoom-create", handleCreateVideoRoom);
+
+async function handleCreateRouletteRoom(req) {
+    const { params, user } = req;
+
+    const requestValidation = validateRequest(createRouletteRoomSchema, params);
+    if (requestValidation.ok) {
+        const confId = params.conference;
+
+        const authorized = !!user && await isUserInRoles(user.id, confId, ["admin", "manager", "attendee"]);
+        if (authorized) {
+            const profile = await getProfileOfUser(user, confId);
+
+            const spec = params;
+            spec.conference = new Parse.Object("Conference", { id: confId });
+
+            // Clamp capacity down to Twilio max size
+            spec.capacity = Math.min(spec.capacity, 50);
+
+            if (!spec.textChat) {
+                spec.textChat = await createTextChat({
+                    autoWatch: false,
+                    name: spec.name,
+                    conference: spec.conference,
+                    creator: profile,
+                    mirrored: false,
+                    isDM: false,
+                    isPrivate: spec.isPrivate,
+                    mode: "ordinary",
+                    members: [profile.id]
+                });
+            }
+            else {
+                spec.textChat = new Parse.Object("TextChat", { id: spec.textChat });
+            }
+
+            const result = await createVideoRoom(spec, user);
+            return result.id;
+        }
+        else {
+            throw new Error("Permission denied");
+        }
+    }
+    else {
+        throw new Error(requestValidation.error);
+    }
+}
+
+Parse.Cloud.define("rouletteRoom-create", handleCreateRouletteRoom);
 
 /**
  * Gives a user access (ACL) for a video room.
@@ -288,4 +348,5 @@ Parse.Cloud.define("videoRoom-invite", handleInviteToVideoRoom);
 
 module.exports = {
     createVideoRoom
+
 };

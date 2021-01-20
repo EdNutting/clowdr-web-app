@@ -149,9 +149,10 @@ function nextSidebarState(
         if (nextState.allRooms) {
             nextState.tasks.delete("loadingAllRooms");
 
-            // Remove sponsor rooms from the list
+            // Remove sponsor rooms and roulette rooms from the list
             nextState.allRooms = nextState.allRooms.filter(
-                x => !nextState.allSponsors?.map(sponsor => sponsor.videoRoomId).includes(x.room.id)
+                x => !nextState.allSponsors?.map(sponsor => sponsor.videoRoomId).includes(x.room.id))
+                    .filter(x => x.room.mode !== "roulette"
             );
 
             for (const room of nextState.allRooms) {

@@ -86,6 +86,7 @@ export default function AllVideoRooms() {
         const items = rooms
             ?.filter(room => room.items.length === 0)
             ?.filter(room => room.sponsors.length === 0)
+            ?.filter(room => room.room.mode === "ordinary")
             ?.sort(sortRooms)
             ?.map(room => {
                 return {

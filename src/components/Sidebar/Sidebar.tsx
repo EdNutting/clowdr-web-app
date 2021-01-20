@@ -11,6 +11,7 @@ import RoomsGroup from "./Groups/RoomsGroup";
 import ProgramGroup from "./Groups/ProgramGroup";
 import MainMenuGroup from "./Groups/MainGroup";
 import SponsorsGroup from "./Groups/SponsorsGroup";
+import RouletteGroup from "./Groups/RouletteGroup";
 
 interface Props {
     open: boolean;
@@ -105,6 +106,7 @@ export default function Sidebar(props: Props) {
                                 <ChatsGroup minSearchLength={minSearchLength} onItemClicked={onItemClicked} />
                                 <RoomsGroup minSearchLength={minSearchLength} onItemClicked={onItemClicked} />
                                 <SponsorsGroup minSearchLength={minSearchLength} onItemClicked={onItemClicked} />
+                                <RouletteGroup onItemClicked={onItemClicked} />
                             </>
                         ) : (
                             <></>

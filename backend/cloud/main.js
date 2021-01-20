@@ -1,4 +1,5 @@
 require("./analytics");
+require("./chatRoulette");
 require("./clientCache");
 require("./conference");
 require("./config");
